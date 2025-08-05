@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SiTumbuh - Pemantauan Gizi Anak</title>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background: #f2f9f1;
+    }
+    .wrapper {
+      max-width: 1200px;
+      margin: auto;
+      padding: 0 20px;
+    }
+    header {
+      background: linear-gradient(to right, #2ecc71, #27ae60);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      border-bottom-left-radius: 30px;
+      border-bottom-right-radius: 30px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    header h1 {
+      font-size: 28px;
+      margin-bottom: 5px;
+    }
+    .nav-buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 12px;
+      justify-items: center;
+      margin-top: 20px;
+    }
+    .nav-buttons a {
+      background-color: white;
+      color: #27ae60;
+      text-decoration: none;
+      padding: 12px 10px;
+      border-radius: 30px;
+      font-weight: bold;
+      font-size: 14px;
+      width: 100%;
+      max-width: 160px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      text-align: center;
+      transition: all 0.3s ease-in-out;
+    }
+    .nav-buttons a:hover {
+      background-color: #27ae60;
+      color: white;
+      transform: scale(1.05);
+    }
+    .hero {
+      margin-top: 30px;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      text-align: center;
+    }
+    .hero h2 {
+      font-size: 24px;
+      color: #27ae60;
+      margin-bottom: 10px;
+    }
+    .hero p {
+      font-size: 16px;
+      color: #444;
+    }
+    .fitur-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+    }
+    .fitur-card {
+      background: white;
+      padding: 20px;
+      border-radius: 18px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      text-align: center;
+    }
+    .fitur-title {
+      font-size: 20px;
+      color: #27ae60;
+      margin-bottom: 10px;
+    }
+    .fitur-desc {
+      font-size: 16px;
+      color: #444;
+      line-height: 1.6;
+    }
+    .hidden {
+      display: none;
+    }
+    footer {
+      background-color: #f8fdf5;
+      color: #2e7d32;
+      padding: 30px 20px;
+      border-top: 2px solid #c8e6c9;
+      margin-top: 40px;
+    }
+    footer h3 {
+      margin-bottom: 15px;
+      font-size: 1.5em;
+    }
+    footer a {
+      color: #2e7d32;
+      text-decoration: none;
+    }
+    footer a:hover {
+      text-decoration: underline;
+    }
+    @media (max-width: 600px) {
+      .nav-buttons {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+      }
+      .nav-buttons a {
+        font-size: 13px;
+        padding: 10px 5px;
+        max-width: none;
+      }
+    }
+
+    /* Galeri Foto */
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      padding: 20px;
+    }
+
+    .photo {
+      overflow: hidden;
+      border-radius: 10px;
+      background-color: white;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .photo img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .photo:hover {
+      transform: scale(1.02);
+    }
+
+    /* Responsif */
+    @media(max-width: 1024px) {
+      .gallery {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media(max-width: 600px) {
+      .gallery {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrapper">
+    <header>
+      <h1>SiTumbuh 🌱</h1>
+      <p>Pantau gizi anak secara mudah & informatif</p>
+      <div class="nav-buttons">
+        <a href="#" onclick="tampilkanHalaman('utama')">Beranda</a>
+        <a href="#" onclick="tampilkanHalaman('kalkulator')">Kalkulator</a>
+        <a href="#" onclick="tampilkanHalaman('edukasi')">Edukasi</a>
+        <a href="#" onclick="tampilkanHalaman('forum')">Forum</a>
+        <a href="#" onclick="tampilkanHalaman('diskusi')">Konsultasi</a>
+        <a href="#" onclick="tampilkanHalaman('pertumbuhan')">Pertumbuhan</a>
+        <a href="#" onclick="tampilkanHalaman('menu')">Menu Harian</a>
+      </div>
+    </header>
+
+    <div id="halamanUtama">
+      <section class="hero">
+        <h2>Selamat Datang di SiTumbuh 👶🌿</h2>
+        <p>Website ini dibuat untuk membantu pencegahan stunting dan mendukung edukasi gizi anak 
+          disusun oleh mahasiswa Universitas Negeri Jakarta: Abdullah Zikri, kami percaya setiap anak berhak tumbuh sehat dan optimal. Lewat pemantauan gizi yang mudah, SiTumbuh hadir sebagai sahabat orang tua dan bangsa. Bareng bareng kita cegah stunting sejak dini</p>
+      </section>
+<!-- Galeri 4 Kolom Tanpa Judul -->
+  <div class="gallery">
+    <div class="photo" onclick="showAlert('Foto 1')">
+      <img src="IMG_20250801_114628_074@426589482.jpg" alt="Foto 1" />
+    </div>
+    <div class="photo" onclick="showAlert('Foto 2')">
+      <img src="IMG_20250801_115007_558@741946831.jpg" alt="Foto 2" />
+    </div>
+    <div class="photo" onclick="showAlert('Foto 3')">
+      <img src="IMG_20250801_114845_915@1088770295.jpg" alt="Foto 3" />
+    </div>
+    <div class="photo" onclick="showAlert('Foto 4')">
+      <img src="IMG_20250801_114818_647@-2023861831.jpg" alt="Foto 4" />
+    </div>
+  </div>
+      <h2 class="text-center mt-5">Fitur Utama</h2>
+      <div class="fitur-grid">
+        <div class="fitur-card">
+          <div class="fitur-title">💡 Kalkulator Gizi</div>
+          <p class="fitur-desc">Hitung status gizi anak berdasarkan data umur, berat, dan tinggi badan.</p>
+        </div>
+        <div class="fitur-card">
+          <div class="fitur-title">👩‍⚕️ Konsultasi Gizi</div>
+          <p class="fitur-desc">Konsultasikan kondisi gizi anak secara online dengan ahli.</p>
+        </div>
+        <div class="fitur-card">
+          <div class="fitur-title">📖 Edukasi Gizi</div>
+          <p class="fitur-desc">Baca artikel seputar MPASI, nutrisi anak, imunisasi, dan kesehatan lainnya.</p>
+        </div>
+        <div class="fitur-card">
+          <div class="fitur-title">🧠 Forum Diskusi</div>
+          <p class="fitur-desc">Tempat berbagi pengalaman dan bertanya seputar gizi dan tumbuh kembang anak.</p>
+        </div>
+        <div class="fitur-card">
+          <div class="fitur-title">📊 Grafik Pertumbuhan</div>
+          <p class="fitur-desc">Lacak tinggi badan anak dari bulan ke bulan dengan grafik interaktif.</p>
+        </div>
+      </div>
+    </div>
+
+    
+
+  
+    <!-- Halaman Lain -->
+    <div id="halamanKalkulator" class="hidden">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f0f8ff;
+    margin: 0;
+    padding: 20px;
+  }
+  .container {
+    max-width: 800px;
+    margin: auto;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+  h2 {
+    text-align: center;
+    color: #333;
+  }
+  form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 20px;
+  }
+  form label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;
+    color: #444;
+  }
+  input, select, button {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+  }
+  button {
+    background: linear-gradient(to right, #38b000, #00b4d8);
+    color: white;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    grid-column: span 2;
+    margin-top: 10px;
+  }
+  .result {
+    display: none;
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    font-weight: bold;
+    color: white;
+  }
+  .result.kurang { background-color: #ef4444; }
+  .result.normal { background-color: #facc15; color: #000; }
+  .result.tinggi { background-color: #10b981; }
+  canvas {
+    margin-top: 30px;
+  }
+  @media screen and (max-width: 600px) {
+    form {
+      grid-template-columns: 1fr;
+    }
+    button {
+      grid-column: span 1;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <h2>Kalkulator Gizi Anak</h2>
+    <form id="formGizi">
+      <div>
+        <label>Usia (bulan)</label>
+        <input type="number" id="usia" required min="0">
+      </div>
+      <div>
+        <label>Jenis Kelamin</label>
+        <select id="gender">
+          <option value="L">Laki-Laki</option>
+          <option value="P">Perempuan</option>
+        </select>
+      </div>
+      <div>
+        <label>Tinggi Badan (cm)</label>
+        <input type="number" id="tinggi" required>
+      </div>
+      <div>
+        <label>Berat Badan (kg)</label>
+        <input type="number" id="berat" step="0.1" required>
+      </div>
+      <button type="submit">Hitung Status Gizi</button>
+    </form>
+
+    <div id="hasilGizi" class="result"></div>
+
+    <canvas id="chartBerat" height="180"></canvas>
+    <canvas id="chartTinggi" height="180"></canvas>
+  </div>
+
+<script>
+const form = document.getElementById("formGizi");
+const hasilGizi = document.getElementById("hasilGizi");
+let chartBerat, chartTinggi;
+
+form.addEventListener("submit", function (e) {
+  e.preventDefault();
+
+  const usia = parseInt(document.getElementById("usia").value);
+  const gender = document.getElementById("gender").value;
+  const tinggi = parseFloat(document.getElementById("tinggi").value);
+  const berat = parseFloat(document.getElementById("berat").value);
+
+  // Standar WHO contoh (bisa diganti tabel usia sebenarnya)
+  const standarBerat = 18;  
+  const standarTinggi = 85;
+
+  let statusBerat = "";
+  let statusTinggi = "";
+  let kelas = "";
+
+  // Cek status berat badan
+  if (berat < 14) {
+    statusBerat = "Kurang";
+    kelas = "kurang";
+  } else if (berat <= 20) {
+    statusBerat = "Normal";
+    kelas = "normal";
+  } else {
+    statusBerat = "Tinggi";
+    kelas = "tinggi";
+  }
+
+  // Cek status tinggi badan
+  if (tinggi < standarTinggi * 0.95) {
+    statusTinggi = "Stunting";
+  } else if (tinggi <= standarTinggi * 1.05) {
+    statusTinggi = "Normal";
+  } else {
+    statusTinggi = "Tinggi";
+  }
+
+  // Tampilkan hasil
+  hasilGizi.className = `result ${kelas}`;
+  hasilGizi.innerHTML = `
+    <div>Status Gizi (Berat Badan): <strong>${statusBerat}</strong></div>
+    <div>Status Tinggi Badan: <strong>${statusTinggi}</strong></div>
+    <br>
+    <small>Standar WHO Berat: ${standarBerat} kg | Standar WHO Tinggi: ${standarTinggi} cm</small>
+  `;
+  hasilGizi.style.display = "block";
+
+  // Grafik Berat
+  if (chartBerat) chartBerat.destroy();
+  chartBerat = new Chart(document.getElementById("chartBerat"), {
+    type: "bar",
+    data: {
+      labels: ["Anak", "WHO"],
+      datasets: [{
+        label: "Berat Badan (kg)",
+        data: [berat, standarBerat],
+        backgroundColor: ["#3b82f6", "#34d399"],
+        borderRadius: 10
+      }]
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true, max: 30 } }
+    }
+  });
+
+  // Grafik Tinggi
+  if (chartTinggi) chartTinggi.destroy();
+  chartTinggi = new Chart(document.getElementById("chartTinggi"), {
+    type: "bar",
+    data: {
+      labels: ["Anak", "WHO"],
+      datasets: [{
+        label: "Tinggi Badan (cm)",
+        data: [tinggi, standarTinggi],
+        backgroundColor: ["#f59e0b", "#10b981"],
+        borderRadius: 10
+      }]
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true, max: 120 } }
+    }
+  });
+});
+</script>
+</div>
+
+  </script></div>
+    <div id="halamanEdukasi" class="hidden">[
+  <title>Fitur Edukasi</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+    }
+    .video-card {
+      background: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease;
+    }
+    .video-card:hover {
+      transform: scale(1.02);
+    }
+    iframe {
+      width: 100%;
+      height: 180px;
+      border: none;
+      border-radius: 5px;
+    }
+    .title {
+      margin-top: 10px;
+      font-weight: bold;
+      font-size: 16px;
+      color: #444;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Langkah Kecil, dampak besar: Cegah Stuning!</h1>
+
+  <div class="video-grid" id="videoContainer">
+    <!-- Video cards will be injected by JS -->
+  </div>
+
+  <script>
+    const videos = [
+      { title: "Apa itu Stunting?", url: "https://www.youtube.com/embed/HwEka4xz_sc?si=-uVnFnmIF-mJrbem" },
+      { title: "Tips Mencegah Stunting", url: "https://www.youtube.com/embed/jCaHthuF0VU?si=wcd-dn-biexkwqW1" },
+      { title: "Kenali lebih dalam MPASI", url: "https://www.youtube.com/embed/-RYW1I-Xwp0?si=J5g_lxofnb_s12As" },
+      { title: "Sanitasi untuk Mencegah Stunting", url: "https://www.youtube.com/embed/VxwTUUaVO0w?si=YxNlLk8BIZTJ_t0o" },
+      { title: "Tips Pola Asuh Anakox CSS", url: "https://www.youtube.com/embed/YhviJ2EkZpA?si=PJ-GkQbcS2m3fMSj" },
+      { title: "Pedeman Gizi Seimbang", url: "https://www.youtube.com/embed/p4W-bvGvyfk?si=jH-ryvALFMCfxXgV" },
+    ];
+
+    const container = document.getElementById('videoContainer');
+
+    videos.forEach(video => {
+      const card = document.createElement('div');
+      card.className = 'video-card';
+      card.innerHTML = `
+        <iframe src="${video.url}" allowfullscreen></iframe>
+        <div class="title">${video.title}</div>
+      `;
+      container.appendChild(card);
+    });
+  </script>
+
+</body>
+</html>
+</div>
+    <div id="halamanForum" class="hidden">.<title>Forum Diskusi Posyandu & Ulasan</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background: #f2f9f1;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: linear-gradient(to right, #2ecc71, #27ae60);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+    .forum-wrapper {
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
+    }
+    .form-comment {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .form-comment select,
+    .form-comment input,
+    .form-comment textarea {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-family: inherit;
+    }
+    .form-comment textarea {
+      resize: none;
+      min-height: 50px;
+    }
+    .form-comment button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .form-comment button:hover {
+      background: #45a049;
+    }
+    .history-box {
+      background: white;
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .history-item {
+      border-bottom: 1px solid #eee;
+      padding: 10px 0;
+    }
+    .history-item strong {
+      color: #2e7d32;
+    }
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      margin-left: 5px;
+      color: white;
+    }
+    .tanya { background: #ff9800; }
+    .jawab { background: #3f51b5; }
+    .ulasan { background: #4caf50; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>💬 Forum Diskusi & Ulasan Posyandu</h1>
+  <p>Tempat tanya jawab dan memberi masukan untuk pengelola</p>
+</header>
+
+<div class="forum-wrapper">
+  <!-- Form input -->
+  <div class="form-comment">
+    <input type="text" id="forumName" placeholder="Nama Anda">
+    <select id="forumType">
+      <option value="tanya">Pertanyaan</option>
+      <option value="jawab">Jawaban</option>
+      <option value="ulasan">Ulasan</option>
+    </select>
+    <textarea id="forumMessage" placeholder="Tulis pesan..."></textarea>
+    <button onclick="addForumComment()">Kirim</button>
+  </div>
+
+  <!-- Riwayat diskusi -->
+  <div class="history-box">
+    <h4>📜 Riwayat Diskusi & Ulasan</h4>
+    <div id="forumHistory"></div>
+  </div>
+</div>
+
+<script>
+  let forumCommentsData = [
+    {name: "Ani Lestari", type: "tanya", message: "Bagaimana cara menimbang bayi dengan benar di Posyandu?"},
+    {name: "Siti", type: "jawab", message: "Gunakan timbangan khusus bayi, pastikan bayi tenang."},
+    {name: "Tini Mulyani", type: "tanya", message: "Jadwal Posyandu bulan depan kapan ya?"},
+    {name: "Rina", type: "jawab", message: "Tanggal 28 juli jam 08.00 di pos rw bu."},
+    {name: "Lilis Wulandari", type: "tanya", message: "Apa saja yang perlu dibawa saat datang ke Posyandu?"},
+    {name: "Indah", type: "jawab", message: "Bawa KMS, buku kesehatan anak, dan perlengkapan bayi."},
+    {name: "Ayu Kristina", type: "ulasan", message: "Web ini sangat membantu! Informasinya lengkap dan mudah dipahami."},
+    {name: "Lina", type: "ulasan", message: "Tampilan website bagus, tapi akan lebih baik jika ada notifikasi jadwal Posyandu."},
+
+    // Tambahan 20 data
+    {name: "Nuraini", type: "tanya", message: "Berapa kali sebaiknya anak diimunisasi dalam setahun?"},
+    {name: "Putri", type: "jawab", message: "Ikuti jadwal imunisasi dari puskesmas atau Posyandu, biasanya 5-6 kali di tahun pertama."},
+    {name: "Rahmawati", type: "tanya", message: "Apakah ada biaya untuk layanan Posyandu?"},
+    {name: "Dewi", type: "jawab", message: "Tidak, semua layanan Posyandu gratis untuk masyarakat."},
+    {name: "Kartini", type: "tanya", message: "Bagaimana cara mengukur tinggi badan balita di rumah?"},
+    {name: "Winda", type: "jawab", message: "Gunakan meteran di dinding, pastikan anak berdiri tegak tanpa alas kaki."},
+    {name: "Novi", type: "ulasan", message: "Saya suka fitur grafik pertumbuhan di web ini, sangat membantu."},
+    {name: "Silvi", type: "ulasan", message: "Forum ini membuat saya bisa bertanya dan mendapat jawaban cepat."},
+    {name: "Citra", type: "tanya", message: "Kapan sebaiknya mulai memberi MPASI pada bayi?"},
+    {name: "Mega", type: "jawab", message: "Biasanya mulai usia 6 bulan dengan makanan lunak."},
+    {name: "Sulastri", type: "tanya", message: "Apakah Posyandu juga memberikan vitamin untuk ibu hamil?"},
+    {name: "Farida", type: "jawab", message: "Ya, biasanya vitamin dan tablet tambah darah diberikan gratis."},
+    {name: "Risma", type: "ulasan", message: "Desain websitenya nyaman dilihat dan mudah digunakan."},
+    {name: "Kurnia", type: "tanya", message: "Apakah anak boleh minum susu UHT sebelum usia 1 tahun?"},
+    {name: "Nanda", type: "jawab", message: "Tidak disarankan, lebih baik ASI atau susu formula khusus bayi."},
+    {name: "Ratna", type: "ulasan", message: "Saya berharap ke depannya ada fitur pengingat jadwal imunisasi."},
+    {name: "Syifa", type: "tanya", message: "Bagaimana cara mengetahui anak stunting atau tidak?"},
+    {name: "Melati", type: "jawab", message: "Bisa diukur tinggi dan beratnya lalu dibandingkan dengan standar WHO."},
+    {name: "Anisa", type: "ulasan", message: "Terima kasih, web ini membantu saya memantau gizi anak dengan mudah."},
+    {name: "Yuni", type: "jawab", message: "Pastikan rutin cek ke Posyandu agar tumbuh kembang anak terpantau."}
+  ];
+
+  function renderForumHistory() {
+    let html = "";
+    forumCommentsData.slice().reverse().forEach(c => {
+      let tagClass = c.type;
+      let tagText = c.type.charAt(0).toUpperCase() + c.type.slice(1);
+      html += `
+        <div class="history-item">
+          <strong>${c.name}</strong> 
+          <span class="tag ${tagClass}">${tagText}</span><br>
+          ${c.message}
+        </div>
+      `;
+    });
+    document.getElementById("forumHistory").innerHTML = html;
+  }
+
+  function addForumComment() {
+    let name = document.getElementById("forumName").value.trim();
+    let type = document.getElementById("forumType").value;
+    let message = document.getElementById("forumMessage").value.trim();
+    if (name && message) {
+      forumCommentsData.push({name, type, message});
+      document.getElementById("forumName").value = "";
+      document.getElementById("forumMessage").value = "";
+      renderForumHistory();
+    } else {
+      alert("Nama dan pesan harus diisi!");
+    }
+  }
+
+  // Render awal
+  renderForumHistory();
+</script>
+</div>
+    <div id="halamanDiskusi" class="hidden">[<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Konsultasi Ahli Gizi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background: #f2f9f1;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: linear-gradient(to right, #27ae60, #2ecc71);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
+    }
+    .form-box {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    .form-box input, .form-box textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-family: inherit;
+    }
+    .form-box button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .form-box button:hover {
+      background: #45a049;
+    }
+    .consult-list {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+    }
+    .consult-item {
+      border-bottom: 1px solid #eee;
+      padding: 10px 0;
+    }
+    .consult-item strong {
+      color: #2e7d32;
+    }
+    .success-msg {
+      background: #e8f5e9;
+      color: #2e7d32;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 15px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>👩‍⚕️ Konsultasi Ahli Gizi</h1>
+  <p>Tanyakan seputar gizi anak, jawaban akan dikirim melalui email</p>
+</header>
+
+<div class="container">
+  <div class="form-box">
+    <div id="successMessage" class="success-msg"></div>
+    <input type="text" id="consultName" placeholder="Nama Anda">
+    <input type="email" id="consultEmail" placeholder="Email Anda (Gmail)">
+    <input type="number" id="consultAge" placeholder="Usia Anak (bulan)">
+    <textarea id="consultQuestion" placeholder="Tulis pertanyaan Anda..."></textarea>
+    <button onclick="submitConsult()">Kirim Pertanyaan</button>
+  </div>
+
+  <div class="consult-list" id="consultHistory">
+    <h3>📜 Riwayat Konsultasi Terkirim</h3>
+  </div>
+</div>
+
+<script>
+  let consultData = [];
+
+  function renderConsultHistory() {
+    let html = "";
+    consultData.slice().reverse().forEach(item => {
+      html += `
+        <div class="consult-item">
+          <strong>${item.name}</strong> (${item.email})<br>
+          Usia Anak: ${item.age} bln<br>
+          ❓ ${item.question}
+        </div>
+      `;
+    });
+    document.getElementById("consultHistory").innerHTML = "<h3>📜 Riwayat Konsultasi Terkirim</h3>" + html;
+  }
+
+  function submitConsult() {
+    let name = document.getElementById("consultName").value.trim();
+    let email = document.getElementById("consultEmail").value.trim();
+    let age = document.getElementById("consultAge").value.trim();
+    let question = document.getElementById("consultQuestion").value.trim();
+    let successBox = document.getElementById("successMessage");
+
+    if (!name || !email || !age || !question) {
+      alert("Harap isi semua field!");
+      return;
+    }
+
+    // Simpan ke riwayat
+    consultData.push({name, email, age, question});
+
+    // Reset form
+    document.getElementById("consultName").value = "";
+    document.getElementById("consultEmail").value = "";
+    document.getElementById("consultAge").value = "";
+    document.getElementById("consultQuestion").value = "";
+
+    // Tampilkan pesan sukses
+    successBox.innerText = "✅ Konsultasi terkirim ke Ahli Gizi dan akan dijawab melalui Gmail Anda.";
+    successBox.style.display = "block";
+
+    // Render riwayat
+    renderConsultHistory();
+  }
+
+  renderConsultHistory();
+</script>
+</div>
+    <div id="halamanPertumbuhan" class="hidden"><title>Grafik Pertumbuhan Anak</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background: #f2f9f1;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: linear-gradient(to right, #27ae60, #2ecc71);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
+    }
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+    }
+    .form-box {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    .form-box input, .form-box button {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-family: inherit;
+    }
+    .form-box button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .form-box button:hover {
+      background: #45a049;
+    }
+    .status {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+    .baik { background: #c8e6c9; color: #256029; }
+    .waspada { background: #fff3cd; color: #856404; }
+    .kurang { background: #f8d7da; color: #842029; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>📊 Grafik Pertumbuhan Anak</h1>
+  <p>Pengasuh dapat memantau perkembangan anak setiap bulan</p>
+</header>
+
+<div class="container">
+  <div class="form-box">
+    <h3>Masukkan Data Pertumbuhan Anak</h3>
+    <input type="number" id="month" placeholder="Bulan ke-" min="1" max="60">
+    <input type="number" id="height" placeholder="Tinggi Badan (cm)">
+    <input type="number" id="weight" placeholder="Berat Badan (kg)">
+    <button onclick="addData()">Tambah Data</button>
+    <div id="growthStatus" class="status"></div>
+  </div>
+
+  <canvas id="growthChart" height="120"></canvas>
+</div>
+
+<script>
+  let months = [];
+  let heights = [];
+  let weights = [];
+
+  const ctx = document.getElementById('growthChart').getContext('2d');
+  const growthChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: months,
+      datasets: [
+        {
+          label: 'Tinggi Badan (cm)',
+          data: heights,
+          borderColor: '#42a5f5',
+          backgroundColor: 'rgba(66,165,245,0.2)',
+          fill: true,
+          tension: 0.3
+        },
+        {
+          label: 'Berat Badan (kg)',
+          data: weights,
+          borderColor: '#66bb6a',
+          backgroundColor: 'rgba(102,187,106,0.2)',
+          fill: true,
+          tension: 0.3
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { position: 'bottom' } }
+    }
+  });
+
+  function addData() {
+    const month = document.getElementById('month').value;
+    const height = parseFloat(document.getElementById('height').value);
+    const weight = parseFloat(document.getElementById('weight').value);
+    const statusBox = document.getElementById('growthStatus');
+
+    if (!month || !height || !weight) {
+      alert('Harap isi semua field!');
+      return;
+    }
+
+    months.push(`Bulan ${month}`);
+    heights.push(height);
+    weights.push(weight);
+
+    // Tentukan status pertumbuhan sederhana
+    let status = '';
+    let statusClass = '';
+    if (height >= 75 && weight >= 10) {
+      status = 'Perkembangan Baik 👍';
+      statusClass = 'baik';
+    } else if (height >= 65 && weight >= 8) {
+      status = 'Perlu Perhatian ⚠️';
+      statusClass = 'waspada';
+    } else {
+      status = 'Kurang, Segera Konsultasikan ❌';
+      statusClass = 'kurang';
+    }
+
+    statusBox.textContent = status;
+    statusBox.className = `status ${statusClass}`;
+
+    growthChart.update();
+
+    document.getElementById('month').value = '';
+    document.getElementById('height').value = '';
+    document.getElementById('weight').value = '';
+  }
+</script></div>
+    <div id="halamanMenu" class="hidden">.<title>Rekomendasi Menu Harian Anak</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {font-family: 'Quicksand', sans-serif; background: #f2f9f1; margin: 0; padding: 0;}
+  header {background: linear-gradient(to right, #27ae60, #2ecc71); color: white; padding: 20px; text-align: center; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;}
+  .container {max-width: 900px; margin: auto; padding: 20px;}
+  .form-box {background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 5px rgba(0,0,0,0.1); margin-bottom: 20px; text-align: center;}
+  select, button {padding: 10px; border-radius: 5px; border: 1px solid #ccc; margin: 5px; font-family: inherit;}
+  button {background: #4CAF50; color: white; cursor: pointer;}
+  button:hover {background: #45a049;}
+  .menu-card {background: white; padding: 15px; border-radius: 8px; box-shadow: 0 1px 5px rgba(0,0,0,0.1); margin-top: 15px;}
+  .menu-card h3 {color: #2e7d32;}
+  .menu-card ul {padding-left: 20px;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🍽️ Rekomendasi Menu Harian Anak</h1>
+  <p>Pilih usia anak untuk melihat rekomendasi menu & perawatan sesuai umur</p>
+</header>
+
+<div class="container">
+  <div class="form-box">
+    <label for="age">Usia Anak (bulan):</label>
+    <select id="age">
+      <option value="">-- Pilih Usia --</option>
+    </select>
+    <button onclick="showMenu()">Lihat Menu</button>
+  </div>
+
+  <div id="menuResult"></div>
+</div>
+
+<script>
+  // Isi dropdown usia 1-35 bulan
+  const ageSelect = document.getElementById("age");
+  for (let i = 1; i <= 35; i++) {
+    let option = document.createElement("option");
+    option.value = i;
+    option.text = `${i} bulan`;
+    ageSelect.add(option);
+  }
+
+  // Data menu per bulan
+  const menus = {
+    1: {utama:["ASI Eksklusif"], camilan:["Tidur cukup, skin-to-skin"], minuman:["ASI"], catatan:"Menyusui sesuai permintaan bayi, stimulasi sentuhan & suara."},
+    2: {utama:["ASI Eksklusif"], camilan:["Tummy time ringan"], minuman:["ASI"], catatan:"Pantau berat badan, ajak interaksi dengan suara lembut."},
+    3: {utama:["ASI Eksklusif"], camilan:["Main sensorik sederhana"], minuman:["ASI"], catatan:"Beri stimulus senyum & ajak bicara."},
+    4: {utama:["ASI Eksklusif"], camilan:["Latihan tengkurap"], minuman:["ASI"], catatan:"Amati tanda bayi mulai siap makan."},
+    5: {utama:["ASI Eksklusif"], camilan:["Main tepuk tangan"], minuman:["ASI"], catatan:"Diskusikan MPASI dengan tenaga kesehatan."},
+    6: {utama:["Bubur susu bayi", "Pure alpukat"], camilan:["Biskuit bayi lembut"], minuman:["ASI / Susu formula"], catatan:"Mulai MPASI halus 1-2 sdm."},
+    7: {utama:["Bubur tim sayur", "Pure pisang"], camilan:["Biskuit bayi"], minuman:["ASI / Susu formula"], catatan:"Tambah variasi sayur & buah."},
+    8: {utama:["Bubur ayam wortel", "Pure pepaya"], camilan:["Puding susu lembut"], minuman:["ASI / Susu formula"], catatan:"Kenalkan protein hewani & nabati."},
+    9: {utama:["Bubur ikan bayam", "Pure mangga"], camilan:["Buah potong lunak"], minuman:["ASI / Susu formula"], catatan:"Latih makan dengan sendok."},
+    10: {utama:["Nasi tim daging cincang", "Sup sayur"], camilan:["Biskuit bayi"], minuman:["ASI / Susu formula"], catatan:"Kenalkan daging & sumber zat besi."},
+    11: {utama:["Nasi tim tahu sayur", "Sup ayam"], camilan:["Pisang rebus"], minuman:["ASI / Susu formula"], catatan:"Perbanyak protein nabati & hewani."},
+    12: {utama:["Nasi lembek sayur", "Sup ikan"], camilan:["Buah segar"], minuman:["Air putih, ASI"], catatan:"Latih minum air putih."},
+    13: {utama:["Nasi lembek lauk lengkap", "Sayur sop"], camilan:["Roti lembut"], minuman:["Air putih, ASI"], catatan:"Biasakan makan 3x sehari."},
+    14: {utama:["Nasi + lauk telur", "Sayur bening"], camilan:["Buah segar"], minuman:["Air putih, ASI"], catatan:"Variasikan menu setiap hari."},
+    15: {utama:["Nasi + ayam suwir", "Sup sayur"], camilan:["Puding buah"], minuman:["Air putih, ASI"], catatan:"Biasakan makan bersama keluarga."},
+    16: {utama:["Nasi + ikan kukus", "Tumis sayur"], camilan:["Roti isi selai"], minuman:["Air putih, ASI"], catatan:"Kenalkan rasa baru secara bertahap."},
+    17: {utama:["Nasi + tempe goreng", "Sup jagung"], camilan:["Buah potong"], minuman:["Air putih, ASI"], catatan:"Perbanyak sayuran berwarna."},
+    18: {utama:["Nasi + telur dadar", "Sayur sop"], camilan:["Pisang kukus"], minuman:["Air putih, susu UHT"], catatan:"Berikan makanan bervariasi."},
+    19: {utama:["Nasi + ayam goreng", "Sayur bayam"], camilan:["Puding"], minuman:["Air putih, susu UHT"], catatan:"Latih anak makan sendiri."},
+    20: {utama:["Nasi + ikan goreng", "Sup sayur"], camilan:["Roti gandum"], minuman:["Air putih, susu UHT"], catatan:"Jaga asupan protein."},
+    21: {utama:["Nasi + ayam opor", "Sayur lodeh"], camilan:["Buah segar"], minuman:["Air putih, susu UHT"], catatan:"Kenalkan makanan keluarga."},
+    22: {utama:["Nasi + telur rebus", "Sayur asem"], camilan:["Puding buah"], minuman:["Air putih, susu UHT"], catatan:"Berikan sayuran berdaun hijau."},
+    23: {utama:["Nasi + ayam bakar", "Sayur sop"], camilan:["Biskuit"], minuman:["Air putih, susu UHT"], catatan:"Biasakan makan di meja makan."},
+    24: {utama:["Nasi + ikan bakar", "Tumis kangkung"], camilan:["Buah potong"], minuman:["Air putih, susu UHT"], catatan:"Batasi makanan manis."},
+    25: {utama:["Nasi + ayam rica", "Sayur sop"], camilan:["Pisang"], minuman:["Air putih, susu UHT"], catatan:"Perbanyak buah segar."},
+    26: {utama:["Nasi + ayam kecap", "Sayur bening"], camilan:["Roti"], minuman:["Air putih, susu UHT"], catatan:"Latih anak mencoba rasa baru."},
+    27: {utama:["Nasi + ikan kuah", "Sayur sop"], camilan:["Puding"], minuman:["Air putih, susu UHT"], catatan:"Perbanyak variasi sumber protein."},
+    28: {utama:["Nasi + ayam sambal", "Tumis sayur"], camilan:["Buah"], minuman:["Air putih, susu UHT"], catatan:"Batasi makanan pedas."},
+    29: {utama:["Nasi + ayam gulai", "Sayur sop"], camilan:["Biskuit"], minuman:["Air putih, susu UHT"], catatan:"Jaga kebersihan makanan."},
+    30: {utama:["Nasi + telur balado", "Sayur bening"], camilan:["Pisang"], minuman:["Air putih, susu UHT"], catatan:"Berikan porsi sesuai umur."},
+    31: {utama:["Nasi + ayam goreng", "Sayur sop"], camilan:["Buah"], minuman:["Air putih, susu UHT"], catatan:"Konsumsi sayur setiap makan."},
+    32: {utama:["Nasi + ayam kari", "Sayur sop"], camilan:["Roti"], minuman:["Air putih, susu UHT"], catatan:"Hindari makanan instan."},
+    33: {utama:["Nasi + ikan goreng", "Sayur asem"], camilan:["Puding"], minuman:["Air putih, susu UHT"], catatan:"Perbanyak protein hewani."},
+    34: {utama:["Nasi + ayam bakar", "Sayur sop"], camilan:["Buah"], minuman:["Air putih, susu UHT"], catatan:"Perbanyak air putih."},
+    35: {utama:["Nasi + telur dadar", "Sayur sop"], camilan:["Pisang"], minuman:["Air putih, susu UHT"], catatan:"Biasakan makan bersama keluarga."}
+  };
+
+  function showMenu() {
+    const age = parseInt(document.getElementById("age").value);
+    const menuResult = document.getElementById("menuResult");
+
+    if (!age) {
+      alert("Silakan pilih usia anak terlebih dahulu!");
+      return;
+    }
+
+    let menu = menus[age];
+    if (!menu) {
+      menuResult.innerHTML = "<p>Menu belum tersedia untuk usia ini.</p>";
+      return;
+    }
+
+    menuResult.innerHTML = `
+      <div class="menu-card">
+        <h3>Usia ${age} bulan</h3>
+        <p><strong>Makanan Utama:</strong></p>
+        <ul>${menu.utama.map(item => `<li>${item}</li>`).join("")}</ul>
+        <p><strong>Camilan / Aktivitas:</strong></p>
+        <ul>${menu.camilan.map(item => `<li>${item}</li>`).join("")}</ul>
+        <p><strong>Minuman:</strong></p>
+        <ul>${menu.minuman.map(item => `<li>${item}</li>`).join("")}</ul>
+        <p><strong>Catatan:</strong> ${menu.catatan}</p>
+      </div>
+    `;
+  }
+</script>
+</div>
+
+   <footer style="background: #f9fdf9; padding: 30px 0;">
+  <div style="max-width: 1000px; margin: auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+
+    <!-- Kiri: Info Kontak -->
+    <div style="flex: 1; min-width: 250px;">
+      <h3 style="color: #2e7d32;">Kontak Kami</h3>
+      <p><strong>Nama:</strong> Abdullah Zikri</p>
+      <p><strong>Universitas Negeri Jakarta</strong></p>
+      <p><strong>WhatsApp:</strong> <a href="https://wa.me/6285810680619" style="color: #2e7d32;">0858 1068 0619</a></p>
+      <p><strong>Email:</strong> <a href="mailto:zikriabdulah28@gmail.com" style="color: #2e7d32;">zikriabdulah28@gmail.com</a></p>
+      <p><strong>Instagram:</strong> <a href="https://instagram.com/zqyyst" target="_blank" style="color: #2e7d32;">@zqyyst</a></p>
+    </div>
+
+    <!-- Kanan: Foto Kotak Lengkung -->
+    <div style="flex: 0 0 200px; text-align: center;">
+      <img src="Screenshot_20250802-092914.jpg" alt="Foto Abdullah Zikri" 
+           style="width: 200px; height: 200px; object-fit: cover; border-radius: 25px; background-color: #15697d; border: 2px solid #0f3f4d;">
+    </div>
+  </div>
+
+  <!-- Credit -->
+  <div style="text-align: center; margin-top: 20px; font-size: 0.9em; color: #4caf50;">
+    &copy; 2025 Stunting Tracker | Dibuat oleh Abdullah Zikri
+  </div>
+</footer>
+  </div>
+
+  <script>
+    function tampilkanHalaman(halaman) {
+      const daftarHalaman = ['utama', 'kalkulator', 'edukasi', 'forum', 'diskusi', 'pertumbuhan', 'menu'];
+      daftarHalaman.forEach(id => {
+        const el = document.getElementById(`halaman${capitalize(id)}`);
+        if (el) el.classList.toggle('hidden', id !== halaman);
+      });
+    }
+
+    function capitalize(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+  </script>
+</body>
+</html>
